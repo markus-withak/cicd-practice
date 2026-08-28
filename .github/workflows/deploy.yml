@@ -1,0 +1,17 @@
+name: Deploy to ECS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  job_name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get project code
+        uses: actions/checkout@v4
+
+      - name: Test
+      - run: echo "Running tests"
