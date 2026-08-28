@@ -24,6 +24,9 @@ jobs:
           role-to-assume: arn:aws:iam::510869689698:role/GitHubActionsECRRole
           aws-region: eu-central-1
 
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build docker image
         run: docker build -t test-app .
 
