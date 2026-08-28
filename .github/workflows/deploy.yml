@@ -17,7 +17,7 @@ jobs:
         run: docker build -t test-app .
 
       - name: Tag docker image
-        run: docker tag cicd-practice:latest 510869689698.dkr.ecr.eu-central-1.amazonaws.com/test-app:latest
+        run: docker tag test-app:latest 510869689698.dkr.ecr.eu-central-1.amazonaws.com/cicd-practice:latest
 
       - name: Push docker image to ECR
-        run: docker push 510869689698.dkr.ecr.eu-central-1.amazonaws.com/test-app:latest
+        run: docker push 510869689698.dkr.ecr.eu-central-1.amazonaws.com/cicd-practice:latest
