@@ -4,6 +4,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  ECR_REPOSITORY: 510869689698.dkr.ecr.eu-central-1.amazonaws.com/cicd-practice
+
 
 on:
   push:
@@ -27,11 +30,33 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build docker image
-        run: docker build -t test-app .
-
-      - name: Tag docker image
-        run: docker tag test-app:latest 510869689698.dkr.ecr.eu-central-1.amazonaws.com/cicd-practice:latest
+      - name: Build & tag docker image
+        run: docker build -t $ECR_REPOSITORY:${{ github.sha }} .
 
       - name: Push docker image to ECR
-        run: docker push 510869689698.dkr.ecr.eu-central-1.amazonaws.com/cicd-practice:latest
+        run: docker push $ECR_REPOSITORY:${{ github.sha }}
+
+      - name: Get current task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition cicd-taskdef \
+            --query taskDefinition \
+            > task-definition.json
+
+
+
+      - name: Update image in task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: main
+          image: ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: cicd-practice-service
+          cluster: cidc-practice-cluster
+          wait-for-service-stability: true
