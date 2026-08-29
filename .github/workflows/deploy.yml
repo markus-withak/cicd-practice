@@ -56,5 +56,5 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: cicd-practice-service
-          cluster: cidc-practice-cluster
+          cluster: cicd-practice-cluster
           wait-for-service-stability: true
