@@ -34,7 +34,7 @@ jobs:
         working-directory: ./app
         run: |
           pip install -r requirements.txt
-          pytest ../tests/test_app.py
+          pytest
 
       
       - name: Build & tag docker image
