@@ -33,7 +33,7 @@ jobs:
       - name: Run tests
         run: |
           pip install -r app/requirements.txt
-          tests/test_app.py
+          pytest
 
       
       - name: Build & tag docker image
