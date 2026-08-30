@@ -32,34 +32,35 @@ jobs:
 
       - name: Run tests
         run: |
-          pip install -r requirements.txt
-          pytest
+          pip install -r app/requirements.txt
+          tests/pytest
 
+      
       - name: Build & tag docker image
         run: docker build -t $ECR_REPOSITORY:${{ github.sha }} .
 
-      - name: Push docker image to ECR
-        run: docker push $ECR_REPOSITORY:${{ github.sha }}
+      # - name: Push docker image to ECR
+      #   run: docker push $ECR_REPOSITORY:${{ github.sha }}
 
-      - name: Get current task definition
-        run: |
-          aws ecs describe-task-definition \
-            --task-definition cicd-taskdef \
-            --query taskDefinition \
-            > task-definition.json
+      # - name: Get current task definition
+      #   run: |
+      #     aws ecs describe-task-definition \
+      #       --task-definition cicd-taskdef \
+      #       --query taskDefinition \
+      #       > task-definition.json
 
-      - name: Update image in task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: Main
-          image: ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+      # - name: Update image in task definition
+      #   id: task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: task-definition.json
+      #     container-name: Main
+      #     image: ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
-      - name: Deploy to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: cicd-practice-service
-          cluster: cicd-practice-cluster
-          wait-for-service-stability: true
+      # - name: Deploy to ECS
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     service: cicd-practice-service
+      #     cluster: cicd-practice-cluster
+      #     wait-for-service-stability: true
